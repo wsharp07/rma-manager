@@ -1,11 +1,11 @@
 @{ Layout = "~/Views/Shared/_Layout.cshtml"; }
-@model RmaManager.ViewModels.RmaViewModel
+@using RmaManager.ViewModels
+@model IEnumerable<RmaViewModel>
 
 <h1> List of RMA's </h1>
 
-<h4>@Model.JsonObj</h4>
 <table>
-@foreach(var rma in Model.Rmas)
+@foreach(var rma in Model)
 {
 	<tr><td> @rma.RmaNumber </td></tr>
 }

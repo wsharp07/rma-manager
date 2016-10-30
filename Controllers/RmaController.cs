@@ -6,6 +6,7 @@ using RmaManager.Data;
 using RmaManager.Data.Repository;
 using RmaManager.Data.Repository.Interface;
 using RmaManager.ViewModels;
+using AutoMapper;
 
 namespace RmaManager.Controllers
 {
@@ -18,11 +19,10 @@ namespace RmaManager.Controllers
 		}
 		public IActionResult Index()
 		{
-			RmaViewModel model = new RmaViewModel();
-			model.Rmas = _rmaRepo.GetAllRmas();
-			
-			model.JsonObj = JsonConvert.SerializeObject(model.Rmas);
-			return View(model);
+			IEnumerable<RmaViewModel> results = null;
+			var query = _rmaRepo.GetAllRmas().ToList();
+			results = Mapper.Map<IEnumerable<RmaViewModel>>(query);
+			return View(results);
 		}
 	}
 }

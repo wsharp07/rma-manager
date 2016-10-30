@@ -7,6 +7,10 @@ using Microsoft.AspNet.Routing;
 using RmaManager.Data.Repository.Interface;
 using RmaManager.Data.Repository;
 using Newtonsoft.Json.Serialization;
+using AutoMapper;
+using RmaManager.Models;
+using RmaManager.ViewModels;
+using RmaManager.Mappings;
 
 namespace RmaManager
 {
@@ -48,6 +52,9 @@ namespace RmaManager
             app.UseStaticFiles();
             app.UseMvc(ConfigureRoutes);
             
+            // Automapper
+            Mapper.Initialize(RegisterMaps);
+            
             seeder.EnsureSeedData();
         }
         
@@ -58,6 +65,14 @@ namespace RmaManager
                     template: "{controller}/{action}/{id?}",
                     defaults: new { controller = "Home", action = "Index" }
                 );
+        }
+        
+        private void RegisterMaps(IConfiguration config)
+        {
+            config.CreateMap<Rma,RmaViewModel>()
+                .ForMember(x => x.HardwareTypeName, m => m.MapFrom(x => x.HardwareType.Name));
+                
+            config.CreateMap<RmaViewModel,Rma>().ConvertUsing<RmaVmToEntity>();
         }
 
         // Entry point for the application.
