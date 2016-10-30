@@ -1,6 +1,6 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
-using Microsoft.Data.Entity.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace RmaManager.Migrations
 {
@@ -13,42 +13,51 @@ namespace RmaManager.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("Autoincrement", true),
                     CreatedAt = table.Column<DateTime>(nullable: false),
-                    Name = table.Column<string>(nullable: false),
+                    Name = table.Column<string>(maxLength: 50, nullable: false),
                     UpdatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_HardwareType", x => x.Id);
+                    table.PrimaryKey("PK_HardwareTypes", x => x.Id);
                 });
+
             migrationBuilder.CreateTable(
                 name: "Rmas",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("Autoincrement", true),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     HardwareTypeId = table.Column<int>(nullable: true),
-                    RmaNumber = table.Column<string>(nullable: false),
+                    RmaNumber = table.Column<string>(maxLength: 50, nullable: false),
                     UpdatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Rma", x => x.Id);
+                    table.PrimaryKey("PK_Rmas", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Rma_HardwareType_HardwareTypeId",
+                        name: "FK_Rmas_HardwareTypes_HardwareTypeId",
                         column: x => x.HardwareTypeId,
                         principalTable: "HardwareTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Rmas_HardwareTypeId",
+                table: "Rmas",
+                column: "HardwareTypeId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable("Rmas");
-            migrationBuilder.DropTable("HardwareTypes");
+            migrationBuilder.DropTable(
+                name: "Rmas");
+
+            migrationBuilder.DropTable(
+                name: "HardwareTypes");
         }
     }
 }

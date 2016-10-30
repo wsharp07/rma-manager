@@ -1,4 +1,4 @@
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using RmaManager.Data.Repository.Interface;
 using System.Net;
 using System.Linq;

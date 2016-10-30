@@ -1,9 +1,9 @@
-using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Hosting;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RmaManager.Data;
-using Microsoft.AspNet.Routing;
+using Microsoft.AspNetCore.Routing;
 using RmaManager.Data.Repository.Interface;
 using RmaManager.Data.Repository;
 using Newtonsoft.Json.Serialization;
@@ -26,9 +26,7 @@ namespace RmaManager
                     opt.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                 });
                 
-            services.AddEntityFramework()
-                .AddSqlite()
-                .AddDbContext<RmaContext>();
+            services.AddDbContext<RmaContext>();
             
             // Register Seeds
             services.AddTransient<Seeds>();
@@ -67,15 +65,12 @@ namespace RmaManager
                 );
         }
         
-        private void RegisterMaps(IConfiguration config)
+        private void RegisterMaps(IMapperConfigurationExpression config)
         {
             config.CreateMap<Rma,RmaViewModel>()
                 .ForMember(x => x.HardwareTypeName, m => m.MapFrom(x => x.HardwareType.Name));
                 
             config.CreateMap<RmaViewModel,Rma>().ConvertUsing<RmaVmToEntity>();
         }
-
-        // Entry point for the application.
-        public static void Main(string[] args) => Microsoft.AspNet.Hosting.WebApplication.Run<Startup>(args);
     }
 }

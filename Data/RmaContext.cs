@@ -1,5 +1,5 @@
 using System.IO;
-using Microsoft.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.PlatformAbstractions;
 using RmaManager.Models;
 
@@ -7,7 +7,7 @@ namespace RmaManager.Data
 {
 	public class RmaContext : DbContext
 	{
-		public RmaContext()
+		public RmaContext(DbContextOptions<RmaContext> options) : base(options)
 		{			
 		}
 		protected override void OnModelCreating(ModelBuilder builder)

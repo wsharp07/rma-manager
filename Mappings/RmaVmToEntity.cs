@@ -4,23 +4,21 @@ using RmaManager.Models;
 using System;
 using RmaManager.Data;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace RmaManager.Mappings
 {
     public class RmaVmToEntity : ITypeConverter<RmaViewModel, Rma>
     {
-        public Rma Convert(ResolutionContext context)
+        public Rma Convert(RmaViewModel src, Rma dest, ResolutionContext context)
         {
-            if(context.IsSourceValueNull)
+            if(src == null)
                 return null;
-                
-            var src = (RmaViewModel)context.SourceValue;
-            var dest = new Rma();
             
             dest.Id = src.Id;
             dest.RmaNumber = src.RmaNumber;
-            
-            using(var dbContext = new RmaContext())
+            var options = new DbContextOptions<RmaContext>();
+            using(var dbContext = new RmaContext(options))
             {
                 var hardwareType = dbContext.HardwareTypes
                                 .FirstOrDefault(x => x.Name.Equals(src.HardwareTypeName));

@@ -1,20 +1,20 @@
-using System;
-using Microsoft.Data.Entity;
-using Microsoft.Data.Entity.Infrastructure;
-using Microsoft.Data.Entity.Metadata;
-using Microsoft.Data.Entity.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using RmaManager.Data;
 
 namespace RmaManager.Migrations
 {
     [DbContext(typeof(RmaContext))]
-    [Migration("20151201023922_Initial")]
+    [Migration("20161030021525_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.0-rc1-16348");
+                .HasAnnotation("ProductVersion", "1.0.1");
 
             modelBuilder.Entity("RmaManager.Models.HardwareType", b =>
                 {
@@ -31,7 +31,7 @@ namespace RmaManager.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasAnnotation("Relational:TableName", "HardwareTypes");
+                    b.ToTable("HardwareTypes");
                 });
 
             modelBuilder.Entity("RmaManager.Models.Rma", b =>
@@ -51,13 +51,15 @@ namespace RmaManager.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasAnnotation("Relational:TableName", "Rmas");
+                    b.HasIndex("HardwareTypeId");
+
+                    b.ToTable("Rmas");
                 });
 
             modelBuilder.Entity("RmaManager.Models.Rma", b =>
                 {
-                    b.HasOne("RmaManager.Models.HardwareType")
-                        .WithMany()
+                    b.HasOne("RmaManager.Models.HardwareType", "HardwareType")
+                        .WithMany("Rmas")
                         .HasForeignKey("HardwareTypeId");
                 });
         }
