@@ -1,5 +1,5 @@
 using System.Linq;
-using Microsoft.AspNet.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace RmaManager.Extensions
 {

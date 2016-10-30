@@ -1,12 +1,16 @@
-using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Hosting;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RmaManager.Data;
-using Microsoft.AspNet.Routing;
+using Microsoft.AspNetCore.Routing;
 using RmaManager.Data.Repository.Interface;
 using RmaManager.Data.Repository;
 using Newtonsoft.Json.Serialization;
+using AutoMapper;
+using RmaManager.Models;
+using RmaManager.ViewModels;
+using RmaManager.Mappings;
 
 namespace RmaManager
 {
@@ -22,9 +26,7 @@ namespace RmaManager
                     opt.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                 });
                 
-            services.AddEntityFramework()
-                .AddSqlite()
-                .AddDbContext<RmaContext>();
+            services.AddDbContext<RmaContext>();
             
             // Register Seeds
             services.AddTransient<Seeds>();
@@ -48,6 +50,9 @@ namespace RmaManager
             app.UseStaticFiles();
             app.UseMvc(ConfigureRoutes);
             
+            // Automapper
+            Mapper.Initialize(RegisterMaps);
+            
             seeder.EnsureSeedData();
         }
         
@@ -59,8 +64,13 @@ namespace RmaManager
                     defaults: new { controller = "Home", action = "Index" }
                 );
         }
-
-        // Entry point for the application.
-        public static void Main(string[] args) => Microsoft.AspNet.Hosting.WebApplication.Run<Startup>(args);
+        
+        private void RegisterMaps(IMapperConfigurationExpression config)
+        {
+            config.CreateMap<Rma,RmaViewModel>()
+                .ForMember(x => x.HardwareTypeName, m => m.MapFrom(x => x.HardwareType.Name));
+                
+            config.CreateMap<RmaViewModel,Rma>().ConvertUsing<RmaVmToEntity>();
+        }
     }
 }

@@ -1,10 +1,13 @@
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using RmaManager.Data.Repository.Interface;
 using System.Net;
 using System.Linq;
 using System;
 using RmaManager.Extensions;
 using RmaManager.Models;
+using RmaManager.ViewModels;
+using AutoMapper;
+using System.Collections.Generic;
 
 namespace RmaManager.Controllers.Api
 {
@@ -23,7 +26,8 @@ namespace RmaManager.Controllers.Api
 		[HttpGet("")]
 		public JsonResult Get()
 		{
-			var results = _rmaRepo.GetAllRmas();
+			IEnumerable<Rma> response = _rmaRepo.GetAllRmas();
+			IEnumerable<RmaViewModel> results = Mapper.Map<IEnumerable<RmaViewModel>>(response);
 			return Json(results);
 		}
 		
@@ -32,13 +36,23 @@ namespace RmaManager.Controllers.Api
 		#region Post
 		
 		[HttpPost("")]
-		public JsonResult Post([FromBody]Rma model)
+		public JsonResult Post([FromBody]RmaViewModel model)
 		{
-			if(ModelState.IsValid)
+			try
 			{
-				Response.StatusCode = (int)HttpStatusCode.Created;
-				//_rmaRepo.Upsert(model);
-				return Json(model);
+				if(ModelState.IsValid)
+				{
+					var rmaEntity = Mapper.Map<Rma>(model);
+					Response.StatusCode = (int)HttpStatusCode.Created;
+					
+					//_rmaRepo.Upsert(model);
+					return Json(Mapper.Map<RmaViewModel>(rmaEntity));
+				}
+			}
+			catch(Exception ex)
+			{
+				Response.StatusCode = (int)HttpStatusCode.BadRequest;
+				return Json(new { Message = ex.Message});
 			}
 			
 			Response.StatusCode = (int)HttpStatusCode.BadRequest;
